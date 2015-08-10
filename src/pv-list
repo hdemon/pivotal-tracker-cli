@@ -1,0 +1,21 @@
+#!/usr/bin/env node --harmony --harmony_arrow_functions --harmony_modules
+
+"use strict";
+const program = require('commander')
+import Story from './story'
+
+program
+  .option('-p, --project-id [projectId]', 'project id')
+  .option('-t, --token [token]', 'token')
+  .parse(process.argv);
+
+const PROJECT_ID = program.projectId
+const TOKEN = program.token
+
+Story.set({ projectId: PROJECT_ID, token: TOKEN })
+Story.getList()
+  .then((stories) => {
+    console.log(stories)
+  }).catch(function(err) {
+    console.error(colors.red("error: " + err.data.general_problem))
+  })
