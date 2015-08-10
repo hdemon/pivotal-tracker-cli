@@ -27,9 +27,10 @@ export default class Story {
     request.method = "GET"
 
     return new Promise( (resolve, reject) => {
-      axios(request).then((response) => {
-        resolve(this._createStoriesFrom(response.data))
-      }).catch(reject)
+      axios(request)
+        .then((response) => {
+          resolve(this._createStoriesFrom(response.data))
+        }).catch(reject)
     })
   }
 
@@ -42,7 +43,7 @@ export default class Story {
         "Content-Type": "application/json",
       },
       transformRequest: [function (data) {
-        return JSON.stringify(data);
+        return JSON.stringify(data)
       }],
     }
   }

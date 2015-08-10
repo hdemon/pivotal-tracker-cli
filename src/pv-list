@@ -1,6 +1,7 @@
 #!/usr/bin/env node --harmony --harmony_arrow_functions --harmony_modules
 
 import program from 'commander'
+import cliff from 'cliff'
 import Story from './story'
 
 program
@@ -11,7 +12,11 @@ program
 Story.set({ projectId: program.projectId, token: program.token })
 Story.getList()
   .then((stories) => {
-    stories.forEach((story) => { console.log(story.name) })
+    let formattedStories = stories.map((story) => {
+      return [story.id, story.estimate, story.name]
+    })
+
+    console.log(cliff.stringifyRows(formattedStories));
   }).catch(function(err) {
     console.error(colors.red("error: " + err.data.general_problem))
   })
