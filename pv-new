@@ -1,0 +1,48 @@
+#!/usr/bin/env node --harmony
+
+"use strict";
+const program = require('commander')
+const axios = require('axios')
+const colors = require('colors')
+
+program
+  .option('-p, --project-id [projectId]', 'project id')
+  .option('-t, --token [token]', 'token')
+  .parse(process.argv);
+
+let args = program.args;
+
+if (!args.length) {
+  console.error('arguments required');
+  process.exit(1);
+}
+
+const PROJECT_ID = program.projectId
+const TOKEN = program.token
+let taskName = args[0]
+let estimate = Number(args[1])
+
+const request = {
+  url: `https://www.pivotaltracker.com/services/v5/projects/${PROJECT_ID}/stories`,
+  protocol: "https",
+  method: "POST",
+  headers: {
+    "X-TrackerToken": TOKEN,
+    "Content-Type": "application/json",
+  },
+  data: {
+    current_state: "unscheduled",
+    estimate: estimate,
+    name: taskName,
+  },
+  transformRequest: [function (data) {
+    return JSON.stringify(data);
+  }],
+}
+
+axios(request)
+  .then(function(response) {
+    console.log(response);
+  }).catch(function(err) {
+    console.error(colors.red("error: " + err.data.general_problem))
+  })
