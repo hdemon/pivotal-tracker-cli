@@ -1,0 +1,33 @@
+#!/usr/bin/env node --harmony --harmony_arrow_functions --harmony_modules
+'use strict';
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _commander = require('commander');
+
+var _commander2 = _interopRequireDefault(_commander);
+
+var _cliff = require('cliff');
+
+var _cliff2 = _interopRequireDefault(_cliff);
+
+var _pvt = require('pvt');
+
+var _pvt2 = _interopRequireDefault(_pvt);
+
+_commander2['default'].option('-p, --project-id [projectId]', 'project id').option('-t, --token [token]', 'token').option('-s, --state [state]', 'filter by state').parse(process.argv);
+
+_pvt2['default'].Story.set({ projectId: _commander2['default'].projectId, token: _commander2['default'].token });
+
+var parameters = {};
+if (_commander2['default'].state) parameters.with_state = _commander2['default'].state;
+
+_pvt2['default'].Story.getList(parameters).then(function (stories) {
+  var formattedStories = stories.map(function (story) {
+    return [story.id, story.estimate, story.name];
+  });
+
+  console.log(_cliff2['default'].stringifyRows(formattedStories));
+})['catch'](function (err) {
+  console.error(colors.red("error: " + err.data.general_problem));
+});

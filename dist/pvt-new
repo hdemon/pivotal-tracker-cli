@@ -1,0 +1,54 @@
+#!/usr/bin/env node --harmony
+'use strict';
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _commander = require('commander');
+
+var _commander2 = _interopRequireDefault(_commander);
+
+var _cliff = require('cliff');
+
+var _cliff2 = _interopRequireDefault(_cliff);
+
+var _pvt = require('pvt');
+
+var _pvt2 = _interopRequireDefault(_pvt);
+
+_commander2['default'].option('-p, --project-id [projectId]', 'project id').option('-t, --token [token]', 'token').parse(process.argv);
+
+var args = _commander2['default'].args;
+
+if (!args.length) {
+  console.error('arguments required');
+  process.exit(1);
+}
+
+var PROJECT_ID = _commander2['default'].projectId;
+var TOKEN = _commander2['default'].token;
+var taskName = args[0];
+var estimate = Number(args[1]);
+
+var request = {
+  url: 'https://www.pivotaltracker.com/services/v5/projects/' + PROJECT_ID + '/stories',
+  protocol: "https",
+  method: "POST",
+  headers: {
+    "X-TrackerToken": TOKEN,
+    "Content-Type": "application/json"
+  },
+  data: {
+    current_state: "unscheduled",
+    estimate: estimate,
+    name: taskName
+  },
+  transformRequest: [function (data) {
+    return JSON.stringify(data);
+  }]
+};
+
+axios(request).then(function (response) {
+  console.log(response);
+})['catch'](function (err) {
+  console.error(colors.red("error: " + err.data.general_problem));
+});

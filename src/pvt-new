@@ -1,9 +1,8 @@
 #!/usr/bin/env node --harmony
 
-"use strict";
-const program = require('commander')
-const axios = require('axios')
-const colors = require('colors')
+import program from 'commander'
+import cliff from 'cliff'
+import Pvt from 'pvt'
 
 program
   .option('-p, --project-id [projectId]', 'project id')
