@@ -2,15 +2,20 @@
 
 import program from 'commander'
 import cliff from 'cliff'
-import Story from './story'
+import Pvt from 'pvt'
 
 program
   .option('-p, --project-id [projectId]', 'project id')
   .option('-t, --token [token]', 'token')
+  .option('-s, --state [state]', 'filter by state')
   .parse(process.argv)
 
-Story.set({ projectId: program.projectId, token: program.token })
-Story.getList()
+Pvt.Story.set({ projectId: program.projectId, token: program.token })
+
+let parameters = {}
+if (program.state) parameters.with_state = program.state
+
+Pvt.Story.getList(parameters)
   .then((stories) => {
     let formattedStories = stories.map((story) => {
       return [story.id, story.estimate, story.name]
