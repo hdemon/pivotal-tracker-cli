@@ -11,7 +11,10 @@ program
   // .option('-d, --detail', 'show detail')
   .parse(process.argv)
 
-Pvt.Story.set({ projectId: program.projectId, token: program.token })
+Pvt.Story.set({
+  projectId: program.projectId || process.env.PIVOTAL_TRACKER_DEFAULT_PROJECT_ID,
+  token: program.token || process.env.PIVOTAL_TRACKER_TOKEN
+})
 
 let parameters = {}
 let id = program.args[0]

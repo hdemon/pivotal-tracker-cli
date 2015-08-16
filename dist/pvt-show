@@ -23,7 +23,10 @@ _commander2['default'].option('-p, --project-id [projectId]', 'project id').opti
 // .option('-d, --detail', 'show detail')
 .parse(process.argv);
 
-_pvt2['default'].Story.set({ projectId: _commander2['default'].projectId, token: _commander2['default'].token });
+_pvt2['default'].Story.set({
+  projectId: _commander2['default'].projectId || process.env.PIVOTAL_TRACKER_DEFAULT_PROJECT_ID,
+  token: _commander2['default'].token || process.env.PIVOTAL_TRACKER_TOKEN
+});
 
 var parameters = {};
 var id = _commander2['default'].args[0];
