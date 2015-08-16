@@ -23,7 +23,7 @@ _commander2['default'].option('-p, --project-id [projectId]', 'project id').opti
 // .option('-d, --detail', 'show detail')
 .parse(process.argv);
 
-_pvt2['default'].Story.set({
+_pvt2['default'].Story.setMetaInfo({
   projectId: _commander2['default'].projectId || process.env.PIVOTAL_TRACKER_DEFAULT_PROJECT_ID,
   token: _commander2['default'].token || process.env.PIVOTAL_TRACKER_TOKEN
 });
@@ -32,9 +32,7 @@ var parameters = {};
 var id = _commander2['default'].args[0];
 if (_commander2['default'].state) parameters.with_state = _commander2['default'].state;
 
-var story = new _pvt2['default'].Story({ id: id });
-
-story.fetch().then(function (story) {
+_pvt2['default'].Story.fetch(id).then(function (story) {
   var formattedStory = [[story.id, story.estimate, story.current_state, story.name]];
   console.log(_cliff2['default'].stringifyRows(formattedStory));
 })['catch'](function (err) {

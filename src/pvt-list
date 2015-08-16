@@ -11,7 +11,7 @@ program
   .option('-s, --state [state]', 'filter by state')
   .parse(process.argv)
 
-Pvt.Story.set({
+Pvt.Story.setMetaInfo({
   projectId: program.projectId || process.env.PIVOTAL_TRACKER_DEFAULT_PROJECT_ID,
   token: program.token || process.env.PIVOTAL_TRACKER_TOKEN
 })
@@ -24,7 +24,6 @@ Pvt.Story.getList(parameters)
     let formattedStories = stories.map((story) => {
       return [story.id, story.estimate, story.current_state, story.name]
     })
-
     console.log(cliff.stringifyRows(formattedStories));
   }).catch(function(err) {
     console.log(err);

@@ -11,7 +11,7 @@ program
   // .option('-d, --detail', 'show detail')
   .parse(process.argv)
 
-Pvt.Story.set({
+Pvt.Story.setMetaInfo({
   projectId: program.projectId || process.env.PIVOTAL_TRACKER_DEFAULT_PROJECT_ID,
   token: program.token || process.env.PIVOTAL_TRACKER_TOKEN
 })
@@ -20,9 +20,7 @@ let parameters = {}
 let id = program.args[0]
 if (program.state) parameters.with_state = program.state
 
-let story = new Pvt.Story({ id: id })
-
-story.fetch()
+Pvt.Story.fetch(id)
   .then((story) => {
     let formattedStory = [[
       story.id,

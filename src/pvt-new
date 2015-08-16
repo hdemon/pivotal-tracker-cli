@@ -10,7 +10,7 @@ program
   .option('-t, --token [token]', 'token')
   .parse(process.argv)
 
-Pvt.Story.set({
+Pvt.Story.setMetaInfo({
   projectId: program.projectId || process.env.PIVOTAL_TRACKER_DEFAULT_PROJECT_ID,
   token: program.token || process.env.PIVOTAL_TRACKER_TOKEN
 })
@@ -18,22 +18,19 @@ Pvt.Story.set({
 let parameters = {}
 if (program.state) parameters.with_state = program.state
 
-let story = new Pvt.Story({
+Pvt.Story.save({
   name: program.args[0],
   estimate: program.args[1],
   story_type: program.args[2],
   current_state: program.args[3],
+}).then((story) => {
+  let formattedStory = [[
+    story.id,
+    story.estimate,
+    story.current_state,
+    story.name,
+  ]]
+  console.log(cliff.stringifyRows(formattedStory));
+}).catch(function(err) {
+  console.error(err);
 })
-
-story.save()
-  .then((story) => {
-    let formattedStory = [[
-      story.id,
-      story.estimate,
-      story.current_state,
-      story.name,
-    ]]
-    console.log(cliff.stringifyRows(formattedStory));
-  }).catch(function(err) {
-    console.error(err);
-  })
