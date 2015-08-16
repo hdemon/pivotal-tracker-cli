@@ -1,0 +1,33 @@
+#!/usr/bin/env node --harmony --harmony_arrow_functions --harmony_modules
+
+import program from 'commander'
+import cliff from 'cliff'
+import Pvt from 'pvt'
+import colors from 'colors'
+
+program
+  .option('-p, --project-id [projectId]', 'project id')
+  .option('-t, --token [token]', 'token')
+  // .option('-d, --detail', 'show detail')
+  .parse(process.argv)
+
+Pvt.Story.set({ projectId: program.projectId, token: program.token })
+
+let parameters = {}
+let id = program.args[0]
+if (program.state) parameters.with_state = program.state
+
+let story = new Pvt.Story({ id: id })
+
+story.fetch()
+  .then((story) => {
+    let formattedStory = [[
+      story.id,
+      story.estimate,
+      story.current_state,
+      story.name,
+    ]]
+    console.log(cliff.stringifyRows(formattedStory));
+  }).catch(function(err) {
+    console.error(err);
+  })
