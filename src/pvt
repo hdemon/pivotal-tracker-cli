@@ -7,4 +7,5 @@ program
   .version('0.0.1')
   .command('new [task]', 'create new task')
   .command('list', 'show stories')
+  .command('show', 'show specified story')
   .parse(process.argv)

@@ -3,6 +3,7 @@
 import program from 'commander'
 import cliff from 'cliff'
 import Pvt from 'pvt'
+import colors from 'colors'
 
 program
   .option('-p, --project-id [projectId]', 'project id')
@@ -18,10 +19,11 @@ if (program.state) parameters.with_state = program.state
 Pvt.Story.getList(parameters)
   .then((stories) => {
     let formattedStories = stories.map((story) => {
-      return [story.id, story.estimate, story.name]
+      return [story.id, story.estimate, story.current_state, story.name]
     })
 
     console.log(cliff.stringifyRows(formattedStories));
   }).catch(function(err) {
-    console.error(colors.red("error: " + err.data.general_problem))
+    console.log(err);
+    // console.error(colors.red("error: " + err.data.general_problem))
   })
