@@ -1,4 +1,4 @@
-#!/usr/bin/env node --harmony
+#!/usr/bin/env node --harmony --harmony_arrow_functions --harmony_modules
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -15,40 +15,30 @@ var _pvt = require('pvt');
 
 var _pvt2 = _interopRequireDefault(_pvt);
 
+var _colors = require('colors');
+
+var _colors2 = _interopRequireDefault(_colors);
+
 _commander2['default'].option('-p, --project-id [projectId]', 'project id').option('-t, --token [token]', 'token').parse(process.argv);
 
-var args = _commander2['default'].args;
+_pvt2['default'].Story.set({
+  projectId: _commander2['default'].projectId || process.env.PIVOTAL_TRACKER_DEFAULT_PROJECT_ID,
+  token: _commander2['default'].token || process.env.PIVOTAL_TRACKER_TOKEN
+});
 
-if (!args.length) {
-  console.error('arguments required');
-  process.exit(1);
-}
+var parameters = {};
+if (_commander2['default'].state) parameters.with_state = _commander2['default'].state;
 
-var PROJECT_ID = _commander2['default'].projectId;
-var TOKEN = _commander2['default'].token;
-var taskName = args[0];
-var estimate = Number(args[1]);
+var story = new _pvt2['default'].Story({
+  name: _commander2['default'].args[0],
+  estimate: _commander2['default'].args[1],
+  story_type: _commander2['default'].args[2],
+  current_state: _commander2['default'].args[3]
+});
 
-var request = {
-  url: 'https://www.pivotaltracker.com/services/v5/projects/' + PROJECT_ID + '/stories',
-  protocol: "https",
-  method: "POST",
-  headers: {
-    "X-TrackerToken": TOKEN,
-    "Content-Type": "application/json"
-  },
-  data: {
-    current_state: "unscheduled",
-    estimate: estimate,
-    name: taskName
-  },
-  transformRequest: [function (data) {
-    return JSON.stringify(data);
-  }]
-};
-
-axios(request).then(function (response) {
-  console.log(response);
+story.save().then(function (story) {
+  var formattedStory = [[story.id, story.estimate, story.current_state, story.name]];
+  console.log(_cliff2['default'].stringifyRows(formattedStory));
 })['catch'](function (err) {
-  console.error(colors.red("error: " + err.data.general_problem));
+  console.error(err);
 });

@@ -1,47 +1,39 @@
-#!/usr/bin/env node --harmony
+#!/usr/bin/env node --harmony --harmony_arrow_functions --harmony_modules
 
 import program from 'commander'
 import cliff from 'cliff'
 import Pvt from 'pvt'
+import colors from 'colors'
 
 program
   .option('-p, --project-id [projectId]', 'project id')
   .option('-t, --token [token]', 'token')
-  .parse(process.argv);
+  .parse(process.argv)
 
-let args = program.args;
+Pvt.Story.set({
+  projectId: program.projectId || process.env.PIVOTAL_TRACKER_DEFAULT_PROJECT_ID,
+  token: program.token || process.env.PIVOTAL_TRACKER_TOKEN
+})
 
-if (!args.length) {
-  console.error('arguments required');
-  process.exit(1);
-}
+let parameters = {}
+if (program.state) parameters.with_state = program.state
 
-const PROJECT_ID = program.projectId
-const TOKEN = program.token
-let taskName = args[0]
-let estimate = Number(args[1])
+let story = new Pvt.Story({
+  name: program.args[0],
+  estimate: program.args[1],
+  story_type: program.args[2],
+  current_state: program.args[3],
+})
 
-const request = {
-  url: `https://www.pivotaltracker.com/services/v5/projects/${PROJECT_ID}/stories`,
-  protocol: "https",
-  method: "POST",
-  headers: {
-    "X-TrackerToken": TOKEN,
-    "Content-Type": "application/json",
-  },
-  data: {
-    current_state: "unscheduled",
-    estimate: estimate,
-    name: taskName,
-  },
-  transformRequest: [function (data) {
-    return JSON.stringify(data);
-  }],
-}
-
-axios(request)
-  .then(function(response) {
-    console.log(response);
+story.save()
+  .then((story) => {
+    let formattedStory = [[
+      story.id,
+      story.estimate,
+      story.current_state,
+      story.name,
+    ]]
+    console.log(cliff.stringifyRows(formattedStory));
   }).catch(function(err) {
-    console.error(colors.red("error: " + err.data.general_problem))
+    console.error(err);
   })
