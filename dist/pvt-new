@@ -19,7 +19,7 @@ var _colors = require('colors');
 
 var _colors2 = _interopRequireDefault(_colors);
 
-_commander2['default'].option('-p, --project-id [projectId]', 'project id').option('-t, --token [token]', 'token').parse(process.argv);
+_commander2['default'].option('-p, --project-id [projectId]', 'project id').option('-t, --token [token]', 'token').option('-l, --labels [labels]', 'add labels').parse(process.argv);
 
 _pvt2['default'].Story.setMetaInfo({
   projectId: _commander2['default'].projectId || process.env.PIVOTAL_TRACKER_DEFAULT_PROJECT_ID,
@@ -33,7 +33,8 @@ _pvt2['default'].Story.save({
   name: _commander2['default'].args[0],
   estimate: _commander2['default'].args[1],
   story_type: _commander2['default'].args[2],
-  current_state: _commander2['default'].args[3]
+  current_state: _commander2['default'].args[3],
+  labels: _commander2['default'].labels.split(',')
 }).then(function (story) {
   var formattedStory = [[story.id, story.estimate, story.current_state, story.name]];
   console.log(_cliff2['default'].stringifyRows(formattedStory));

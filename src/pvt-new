@@ -8,6 +8,7 @@ import colors from 'colors'
 program
   .option('-p, --project-id [projectId]', 'project id')
   .option('-t, --token [token]', 'token')
+  .option('-l, --labels [labels]', 'add labels')
   .parse(process.argv)
 
 Pvt.Story.setMetaInfo({
@@ -23,6 +24,7 @@ Pvt.Story.save({
   estimate: program.args[1],
   story_type: program.args[2],
   current_state: program.args[3],
+  labels: program.labels.split(','),
 }).then((story) => {
   let formattedStory = [[
     story.id,
