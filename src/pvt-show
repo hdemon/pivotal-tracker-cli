@@ -8,7 +8,7 @@ import colors from 'colors'
 program
   .option('-p, --project-id [projectId]', 'project id')
   .option('-t, --token [token]', 'token')
-  // .option('-d, --detail', 'show detail')
+  .option('-d, --detail', 'show detail')
   .parse(process.argv)
 
 Pvt.Story.setMetaInfo({
@@ -22,13 +22,17 @@ if (program.state) parameters.with_state = program.state
 
 Pvt.Story.fetch(id)
   .then((story) => {
-    let formattedStory = [[
-      story.id,
-      story.estimate,
-      story.current_state,
-      story.name,
-    ]]
-    console.log(cliff.stringifyRows(formattedStory));
+    if (program.detail) {
+      console.log(cliff.inspect(story));
+    } else {
+      let formattedStory = [[
+        story.id,
+        story.estimate,
+        story.current_state,
+        story.name,
+      ]]
+      console.log(cliff.stringifyRows(formattedStory));
+    }
   }).catch(function(err) {
     console.error(err);
   })
