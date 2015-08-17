@@ -38,5 +38,5 @@ _pvt2['default'].Story.fetch(id).then(function (story) {
     console.log(_cliff2['default'].stringifyRows(formattedStory));
   }
 })['catch'](function (err) {
-  console.error(err);
+  console.error(_colors2['default'].red(err.data.error));
 });

@@ -23,7 +23,7 @@ if (program.state) parameters.with_state = program.state
 Pvt.Story.fetch(id)
   .then((story) => {
     if (program.detail) {
-      console.log(cliff.inspect(story));
+      console.log(cliff.inspect(story))
     } else {
       let formattedStory = [[
         story.id,
@@ -31,8 +31,8 @@ Pvt.Story.fetch(id)
         story.current_state,
         story.name,
       ]]
-      console.log(cliff.stringifyRows(formattedStory));
+      console.log(cliff.stringifyRows(formattedStory))
     }
   }).catch(function(err) {
-    console.error(err);
+    console.error(colors.red(err.data.error))
   })
