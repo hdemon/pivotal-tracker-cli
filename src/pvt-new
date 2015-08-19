@@ -17,14 +17,17 @@ Pvt.Story.setMetaInfo({
 })
 
 let parameters = {}
+let labels = []
+
 if (program.state) parameters.with_state = program.state
+if (program.labels) labels = program.labels.split(',')
 
 Pvt.Story.save({
   name: program.args[0],
   estimate: program.args[1],
   story_type: program.args[2],
   current_state: program.args[3],
-  labels: program.labels.split(','),
+  labels: labels,
 }).then((story) => {
   let formattedStory = [[
     story.id,
@@ -34,5 +37,5 @@ Pvt.Story.save({
   ]]
   console.log(cliff.stringifyRows(formattedStory));
 }).catch(function(err) {
-  console.error(err);
+  console.trace(err);
 })
