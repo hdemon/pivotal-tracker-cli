@@ -4,6 +4,7 @@ import program from 'commander'
 import cliff from 'cliff'
 import Pvt from 'pvt'
 import colors from 'colors'
+import _ from 'lodash'
 
 program
   .option('-p, --project-id [projectId]', 'project id')
@@ -17,14 +18,17 @@ Pvt.Story.setMetaInfo({
 })
 
 let parameters = {}
-if (program.state) parameters.with_state = program.state
+let states = [/*'accepted', */'delivered', 'finished', 'started', 'rejected', 'planned', 'unstarted', 'unscheduled']
+if (program.state) states = program.state.split(',')
 
 Pvt.Story.getList(parameters)
   .then((stories) => {
-    let formattedStories = stories.map((story) => {
+    let _stories = _.filter(stories, (story) => { return _.contains(states, story.current_state) })
+    let formattedStories = _stories.map((story) => {
       return [story.id, story.estimate, story.current_state, story.name]
     })
-    console.log(cliff.stringifyRows(formattedStories));
+    formattedStories.unshift(["id", "point", "state", "name"])
+    console.log(cliff.stringifyRows(formattedStories, ["gray"]));
   }).catch(function(err) {
     console.log(err);
     // console.error(colors.red("error: " + err.data.general_problem))

@@ -19,6 +19,10 @@ var _colors = require('colors');
 
 var _colors2 = _interopRequireDefault(_colors);
 
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 _commander2['default'].option('-p, --project-id [projectId]', 'project id').option('-t, --token [token]', 'token').option('-s, --state [state]', 'filter by state').parse(process.argv);
 
 _pvt2['default'].Story.setMetaInfo({
@@ -27,13 +31,18 @@ _pvt2['default'].Story.setMetaInfo({
 });
 
 var parameters = {};
-if (_commander2['default'].state) parameters.with_state = _commander2['default'].state;
+var states = [/*'accepted', */'delivered', 'finished', 'started', 'rejected', 'planned', 'unstarted', 'unscheduled'];
+if (_commander2['default'].state) states = _commander2['default'].state.split(',');
 
 _pvt2['default'].Story.getList(parameters).then(function (stories) {
-  var formattedStories = stories.map(function (story) {
+  var _stories = _lodash2['default'].filter(stories, function (story) {
+    return _lodash2['default'].contains(states, story.current_state);
+  });
+  var formattedStories = _stories.map(function (story) {
     return [story.id, story.estimate, story.current_state, story.name];
   });
-  console.log(_cliff2['default'].stringifyRows(formattedStories));
+  formattedStories.unshift(["id", "point", "state", "name"]);
+  console.log(_cliff2['default'].stringifyRows(formattedStories, ["gray"]));
 })['catch'](function (err) {
   console.log(err);
   // console.error(colors.red("error: " + err.data.general_problem))
