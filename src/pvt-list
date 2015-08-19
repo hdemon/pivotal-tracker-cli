@@ -7,9 +7,20 @@ import colors from 'colors'
 import _ from 'lodash'
 
 program
+  .usage('[states] (string separated by comma)')
+  .description("  [states] are string that specifies states of story separated by comma. you can specify from\n" +
+  "\n" +
+  "      accepted, delivered, finished, started, rejected, planned, unstarted, unscheduled\n" +
+  "\n" +
+  "    if you don\'t specify states, stories of all state will be shown except \'accepted\' state one.\n")
   .option('-p, --project-id [projectId]', 'project id')
   .option('-t, --token [token]', 'token')
-  .option('-s, --state [state]', 'filter by state')
+  .on('--help', function(){
+    console.log('  Examples:');
+    console.log('');
+    console.log('    $ pvt list unscheduled,unstarted');
+    console.log('');
+  })
   .parse(process.argv)
 
 Pvt.Story.setMetaInfo({
@@ -19,7 +30,7 @@ Pvt.Story.setMetaInfo({
 
 let parameters = {}
 let states = [/*'accepted', */'delivered', 'finished', 'started', 'rejected', 'planned', 'unstarted', 'unscheduled']
-if (program.state) states = program.state.split(',')
+if (program.args[0]) states = program.args[0].split(',')
 
 Pvt.Story.getList(parameters)
   .then((stories) => {
